@@ -15,7 +15,7 @@ export async function createUser(user: CreateUserParams) {
 		await connectToDataBase();
 
 		const newUser = await User.create(user);
-		return JSON.parse(JSON.stringify(newUser));
+		return JSON.parse(JSON.stringify(newUser)); // turn monogdb__document intò js object
 	} catch (error) {
 		handleError(error);
 	}

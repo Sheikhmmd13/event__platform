@@ -1,5 +1,4 @@
 import { Schema, model, models } from "mongoose";
-import { unique } from "next/dist/build/utils";
 
 const UserSchema = new Schema({
 	clekId: { tyep: String, require: true, unique: true },

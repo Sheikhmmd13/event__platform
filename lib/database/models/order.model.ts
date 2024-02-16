@@ -32,7 +32,7 @@ const OrderSchema = new Schema({
   stripeId: {
     type: String,
     //required:,
-    unique: true,
+    // unique: true,
   },
   totalAmount: {
     type: String,

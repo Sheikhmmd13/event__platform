@@ -2,9 +2,9 @@ import { Webhook } from "svix";
 import { headers } from "next/headers";
 import { WebhookEvent } from "@clerk/nextjs/server";
 import { createUser, deleteUser, updateUser } from "@/lib/action/user.action";
-import { CreateUserParams } from "@/types";
 import { clerkClient } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
+import { CreateUserParams } from "@/types";
 
 export async function POST(req: Request) {
 	// You can find this in the Clerk Dashboard -> Webhooks -> choose the webhook
@@ -56,7 +56,7 @@ export async function POST(req: Request) {
 	const { id } = evt.data;
 	const eventType = evt.type;
 
-	//webhooks
+	console.log("we are here...")
 	if (eventType === "user.created") {
 		const {
 			id,
@@ -67,21 +67,22 @@ export async function POST(req: Request) {
 			username,
 		} = evt.data;
 
-		const user = {
+		const user: CreateUserParams = {
 			clerkId: id,
 			email: email_addresses[0].email_address,
-			username: username,
+			username: username!,
 			firstName: first_name,
 			lastName: last_name,
 			photo: image_url,
 		};
 
-		const newUser = createUser(user);
+		console.log("creatting user")
+		const newUser = await createUser(user);
 
 		if (newUser) {
 			await clerkClient.users.updateUserMetadata(id, {
 				publicMetadata: {
-					userId: newUser.then((obj) => obj._id),
+					userId: newUser._id,
 				},
 			});
 		}
@@ -90,42 +91,26 @@ export async function POST(req: Request) {
 	}
 
 	if (eventType === "user.updated") {
-		const {
-			id,
-			email_addresses,
-			image_url,
-			first_name,
-			last_name,
-			username,
-		} = evt.data;
+		const { id, image_url, first_name, last_name, username } = evt.data;
 
 		const user = {
-			clerkId: id,
-			email: email_addresses[0].email_address,
-			username: username,
 			firstName: first_name,
 			lastName: last_name,
+			username: username!,
 			photo: image_url,
 		};
 
-		const newUser = updateUser(id, user);
+		const updatedUser = await updateUser(id, user);
 
-		if (newUser) {
-			await clerkClient.users.updateUserMetadata(id, {
-				publicMetadata: {
-					userId: newUser.then((obj) => obj._id),
-				},
-			});
-		}
-
-		return NextResponse.json({ message: "OK", user: newUser });
+		return NextResponse.json({ message: "OK", user: updatedUser });
 	}
 
 	if (eventType === "user.deleted") {
 		const { id } = evt.data;
-		const newUser = deleteUser(id!);
 
-		return NextResponse.json({ message: "OK", user: newUser });
+		const deletedUser = await deleteUser(id!);
+
+		return NextResponse.json({ message: "OK", user: deletedUser });
 	}
 
 	return new Response("", { status: 200 });

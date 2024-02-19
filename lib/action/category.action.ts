@@ -10,8 +10,10 @@ export const createCategory = async ({
 }: CreateCategoryParams) => {
 	try {
 		await connectToDataBase();
+		console.log('starting to make category...')
 
 		const newCategory = await Category.create({ name: categoryName });
+		console.log('category was made!')
 		return JSON.parse(JSON.stringify(newCategory));
 	} catch (err) {
 		handleError(err);

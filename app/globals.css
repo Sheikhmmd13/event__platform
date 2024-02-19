@@ -95,6 +95,10 @@ body {
     @apply flex justify-between items-center;
   }
 
+  .flex-start {
+    @apply flex justify-start items-center
+  }
+
   /* TYPOGRAPHY */
   /* 64 */
   .h1-bold {

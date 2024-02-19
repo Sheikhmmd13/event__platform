@@ -31,8 +31,8 @@ const OrderSchema = new Schema({
   },
   stripeId: {
     type: String,
-    //required:,
-    // unique: true,
+    required: true,
+    unique: true,
   },
   totalAmount: {
     type: String,
